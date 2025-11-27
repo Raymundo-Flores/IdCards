@@ -59,13 +59,19 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Preview */
 .preview {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #fff;
+  flex-direction: row; /* Horizontal */
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
 }
+
+/* Cada tarjeta debe estar dentro de un contenedor raíz */
+.print-page {
+  display: block;
+}
+
 
 .card-container {
   display: flex;
@@ -73,7 +79,7 @@ button:disabled {
   gap: 20px;
   justify-content: center;
   align-items: center;
-  margin-top: 15px;
+  margin-top: 0px;
 }
 
 /* Tarjeta general */
@@ -173,58 +179,73 @@ button:disabled {
   margin-top: 25px;
 }
 
+.preview {
+  display: flex;
+  flex-direction: row; /* ✅ Horizontal */
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.print-page {
+  display: block; /* ✅ En pantalla no afecta */
+}
+
 @media print {
-  body * {
-    visibility: hidden;
-  }
 
-  .card-container, .card-container * {
-    visibility: visible;
-  }
-
-  .card-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    page-break-after: always;
-  }
-
+   /* ✅ Ocultar el formulario completamente */
   .formulario {
     display: none !important;
+    visibility: hidden !important;
+  }
+  /* Ocultar todo excepto las tarjetas */
+  body * {
+    visibility: hidden !important;
   }
 
+  .print-page, .print-page * {
+    visibility: visible !important;
+  }
+
+  /* Firefox NO debe usar flex en impresión */
+  .preview {
+    display: block !important;
+  }
+
+  /* Cada tarjeta es una página independiente */
+  .print-page {
+    display: block !important;
+    page-break-after: always !important; /* Chrome/Edge */
+    break-after: page !important;        /* Firefox */
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Tamaño EXACTO de impresión */
   .card {
-    width: 2.125in;
-    height: 3.375in;
-    box-shadow: none;
-    margin: 0;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    width: 4in !important;
+    height: 6in !important;
+    margin: 0 auto !important;
+    padding: 4mm !important;
+    box-shadow: none !important;
+
+    /* Evitar mezcla en Firefox */
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+
+    /* Evitar que Firefox use layout de pantalla */
+    display: block !important;
+    position: relative !important;
+
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  .card.trasera {
-    background-color: #DC0000 !important;
-    background-image: url('../../assets/itine.jpg') !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-  }
-
-  .card.trasera::after {
-    background-image: url('../../assets/logo_ferrari.jpg') !important;
-    background-size: 100px auto !important;
-    background-repeat: no-repeat !important;
-    background-position: top center !important;
-  }
-
-  .fondo-frontal {
-    background-image: url('../../assets/fondo.jpg') !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
+  /* Evitar hoja extra al final */
+  .print-page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
 
   @page {
@@ -232,3 +253,7 @@ button:disabled {
     margin: 0;
   }
 }
+
+
+
+

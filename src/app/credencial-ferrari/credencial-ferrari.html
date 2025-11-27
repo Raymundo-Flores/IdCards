@@ -1,58 +1,55 @@
 <div class="container">
-  
 
   <div style="display: flex;">
-     <!-- Formulario -->
-  <form (ngSubmit)="onSubmit()" #credencialForm="ngForm" class="formulario">
-    <h2>Datos del Socio</h2>
 
-    <label for="nombre">Nombre del socio:</label>
-    <input id="nombre" type="text" name="nombre" [(ngModel)]="nombre" required placeholder="Ej. Carlos Rossi">
+    <!-- Formulario -->
+    <form (ngSubmit)="onSubmit()" #credencialForm="ngForm" class="formulario">
+      <h2>Datos del Socio</h2>
 
-    <label for="fecha">Fecha de afiliación:</label>
-    <input id="fecha" type="date" name="fecha" [(ngModel)]="fecha" required>
+      <label for="nombre">Nombre del socio:</label>
+      <input id="nombre" type="text" name="nombre" [(ngModel)]="nombre" required placeholder="Ej. Carlos Rossi">
 
-    <label for="foto">Foto del socio:</label>
-    <input id="foto" type="file" accept="image/*" (change)="onFotoSeleccionada($event)">
+      <label for="fecha">Fecha de afiliación:</label>
+      <input id="fecha" type="date" name="fecha" [(ngModel)]="fecha" required>
 
-    <label for="foto">Foto del socio:</label>
-    <input id="foto" type="file" accept="image/*" (change)="onFotoSeleccionada($event)">
+      <label for="foto">Foto del socio:</label>
+      <input id="foto" type="file" accept="image/*" (change)="onFotoSeleccionada($event)">
 
-    <div class="botones">
-      <button type="submit" [disabled]="!credencialForm.valid">Generar Credencial</button>
-      <button type="button" (click)="limpiarCampos()">Limpiar</button>
-    </div>
-  </form>
+      <div class="botones">
+        <button type="submit" [disabled]="!credencialForm.valid">Generar Credencial</button>
+        <button type="button" (click)="limpiarCampos()">Limpiar</button>
+      </div>
+    </form>
 
-  <!-- Preview -->
-  <div class="preview">
-  
-    <div class="card-container">
-      <!-- Parte frontal -->
-      <div class="card">
-        <div class="fondo-frontal">
-          <div class="info-socio">
-           <div class="datos-socio kanit-medium">
-             <p style="position: relative;top: 6px;">Member: {{nombre}}</p>
-            <p style="position: relative;bottom: 12px;">Member since: {{fecha}}</p>
-           </div>
-           <div style="top: 51px;position: relative;">
-            <img *ngIf="fotoURL" [src]="fotoURL" alt="Foto del socio" class="foto-socio">
-           </div>
-            
+    <!-- Preview en pantalla -->
+    <div class="preview">
+
+      <!-- ✅ Tarjeta frontal (visible en pantalla y 1 hoja en impresión) -->
+      <div class="print-page">
+        <div class="card frontal">
+          <div class="fondo-frontal">
+            <div class="info-socio">
+              <div class="datos-socio kanit-medium">
+                <p style="position: relative; top: 6px;">Member: {{nombre}}</p>
+                <p style="position: relative; bottom: 12px;">Member since: {{fecha}}</p>
+              </div>
+
+              <div style="top: 51px; position: relative;">
+                <img *ngIf="fotoURL" [src]="fotoURL" alt="Foto del socio" class="foto-socio">
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
 
-      
-    </div>
-  </div>
-
-  <!-- Parte trasera (fondo desde CSS) -->
-      <div class="card trasera">
-       
+      <!-- ✅ Tarjeta trasera (visible en pantalla y 1 hoja en impresión) -->
+      <div class="print-page">
+        <div class="card trasera"></div>
       </div>
+
+    </div>
+
   </div>
-  
 
 </div>

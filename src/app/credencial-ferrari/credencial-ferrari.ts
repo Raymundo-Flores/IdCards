@@ -33,50 +33,59 @@ export class CredencialFerrariComponent {
     }
   }
 
-  async generarPDF() {
+async generarPDF() {
 
-    // ✅ Congelar DOM antes de capturar
-    this.cdr.detectChanges();
-    await new Promise(resolve => setTimeout(resolve, 100));
+  const frontalOriginal = document.querySelector('#cardFrontal .card') as HTMLElement;
+  const traseraOriginal = document.querySelector('#cardTrasera .card') as HTMLElement;
 
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'in',
-      format: [4, 6]
-    });
+  const capture = document.getElementById('capture-area') as HTMLElement;
 
-    /* === FRONTAL === */
-    const frontal = document.querySelector('#cardFrontal .card') as HTMLElement;
+  const pdf = new jsPDF({
+    orientation: 'portrait',
+    unit: 'in',
+    format: [4, 6]
+  });
 
-    const canvasFrontal = await html2canvas(frontal, {
-      scale: 3,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: null
-    });
+  /*********** 1. CAPTURAR FRONTAL ************/
+  capture.innerHTML = ""; // limpiar
 
-    pdf.addImage(canvasFrontal.toDataURL('image/png'), 'PNG', 0, 0, 4, 6);
+  const cloneFront = frontalOriginal.cloneNode(true) as HTMLElement;
+  cloneFront.classList.add("capture-card");
+  capture.appendChild(cloneFront);
 
-    /* === TRASERA === */
-    await new Promise(resolve => setTimeout(resolve, 200));
+  await new Promise(r => setTimeout(r, 100));
 
-    pdf.addPage([4, 6], 'portrait');
+  const canvasFront = await html2canvas(cloneFront, {
+    scale: 3,
+    useCORS: true,
+    backgroundColor: null
+  });
 
-    const trasera = document.querySelector('#cardTrasera .card') as HTMLElement;
+  pdf.addImage(canvasFront.toDataURL("image/png"), "PNG", 0, 0, 4, 6);
 
-    const canvasTrasera = await html2canvas(trasera, {
-      scale: 3,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: null
-    });
+  /*********** 2. CAPTURAR TRASERA ************/
+  pdf.addPage();
 
-    const imgTrasera = canvasTrasera.toDataURL('image/png');
+  capture.innerHTML = ""; // limpiar
 
-    pdf.addImage(imgTrasera, 'PNG', 0, 0, 4, 6, undefined, 'NONE', 180);
+  const cloneBack = traseraOriginal.cloneNode(true) as HTMLElement;
+  cloneBack.classList.add("capture-card");
+  capture.appendChild(cloneBack);
 
-    pdf.save('credencial.pdf');
-  }
+  await new Promise(r => setTimeout(r, 100));
+
+  const canvasBack = await html2canvas(cloneBack, {
+    scale: 3,
+    useCORS: true,
+    backgroundColor: null
+  });
+
+  pdf.addImage(canvasBack.toDataURL("image/png"), "PNG", 0, 0, 4, 6);
+
+  pdf.save("credencial.pdf");
+}
+
+
 
   limpiarCampos(): void {
     this.nombre = '';

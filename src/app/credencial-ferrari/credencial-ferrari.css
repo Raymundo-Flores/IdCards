@@ -1,4 +1,7 @@
-/* Contenedor general */
+/*************************************
+ *   CONTENEDORES Y FORMULARIO
+ *************************************/
+
 .container {
   display: flex;
   flex-direction: row;
@@ -19,7 +22,6 @@
   gap: 30px;
 }
 
-/* Formulario */
 .formulario {
   display: flex;
   flex-direction: column;
@@ -39,58 +41,25 @@
   border: 1px solid #aaa;
 }
 
-/* Botones estilo Ferrari */
-button {
-  background-color: #DC0000;
-  color: #fff;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
+/*************************************
+ *   TARJETAS (FRONTAL + TRASERA)
+ *************************************/
 
-button:hover {
-  background-color: #ff0000;
-  transform: scale(1.03);
-}
-
-button:disabled {
-  background-color: #999;
-  cursor: not-allowed;
-}
-
-.preview {
-  display: flex;
-  flex-direction: row; /* Horizontal */
-  gap: 20px;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-/* Cada tarjeta debe estar dentro de un contenedor raíz */
+/* Contenedor raíz */
 .print-page {
   display: block;
 }
 
-
-.card-container {
-  display: flex;
-  flex-direction: column; /* vertical layout */
-  gap: 20px;
-  justify-content: center;
-  align-items: center;
-  margin-top: 0px;
-}
-
 /* Tarjeta general */
 .card {
-  width: 4in; /* vertical CR80 width */
-  height: 6in; /* vertical CR80 height */
+  width: 4in; 
+  height: 6in;
   border-radius: 6px;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4),
-              0 4px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.4),
+    0 4px 10px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -98,20 +67,15 @@ button:disabled {
   padding: 4mm;
   box-sizing: border-box;
   background-color: #fff;
-  transition: transform 0.2s ease;
 }
 
-.card:hover {
-  transform: scale(1.02);
-}
+/*************************************
+ *   TARJETA FRONTAL
+ *************************************/
 
-/* Fondo frontal */
 .fondo-frontal {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-image: url('../../assets/fondo.jpg');
   background-size: cover;
   background-position: center;
@@ -119,46 +83,19 @@ button:disabled {
   z-index: 0;
 }
 
-
-
-@-moz-document url-prefix() {
-  #cardTrasera .card {
-    overflow: visible !important;
-  }
+.info-socio {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
 }
 
-
-/*Imagen decorativa superior */
-/* .card.trasera::before {
-  content: "";
-  position: absolute;
-  top: 21px;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('../../assets/logo_ferrari.jpg');
-  background-size: 100px auto;
-  background-repeat: no-repeat;
-  background-position: top center;
-  z-index: 2;
-  pointer-events: none;
-} */
-
-.datos-socio{
+.datos-socio {
   top: 73px;
   position: relative;
   display: block;
   background-color: rgba(0, 120, 0, 0.3);
   font-size: 20px;
-}
-
-/* Info socio */
-.info-socio {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  color: #fff;
-  /* background-color: rgba(0,255,0,0.5); */
 }
 
 .foto-socio {
@@ -170,40 +107,28 @@ button:disabled {
   margin-top: 25px;
 }
 
-.preview {
-  display: flex;
-  flex-direction: row; /* ✅ Horizontal */
-  gap: 20px;
-  justify-content: center;
-  align-items: flex-start;
-}
+/*************************************
+ *   TARJETA TRASERA
+ *************************************/
 
-.print-page {
-  display: block; /* ✅ En pantalla no afecta */
-}
-
-/* ✅ Tarjeta trasera compatible con Firefox */
 .card.trasera {
-  position: relative;
-  border-radius: 6px;
-  overflow: hidden; /* Firefox ya no falla con background-image */
   background-color: #DC0000;
+  position: relative;
+  overflow: hidden;
 }
 
-/* ✅ Fondo trasero como background-image (Firefox-friendly) */
 .trasera-fondo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   background-image: url('../../assets/itine.jpg');
-  background-size: contain;      /* ✅ NO se deforma */
-  background-position: center;   /* ✅ Centrada */
+  background-size: contain;
+  background-position: center;
   background-repeat: no-repeat;
   z-index: 1;
 }
 
-/* ✅ Logo encima */
 .logo-trasera {
   position: absolute;
   top: 21px;
@@ -214,25 +139,32 @@ button:disabled {
   pointer-events: none;
 }
 
-.capture-fix {
+/*************************************
+ *   FIXES UNIVERSALES PARA HTML2CANVAS
+ *************************************/
+
+.html2canvas-fix {
+  width: 384px !important;   /* 4in → px */
+  height: 576px !important;  /* 6in → px */
   overflow: visible !important;
+  transform: none !important;
+  backface-visibility: visible !important;
 }
 
-#cardTrasera .card.capture-fix {
-  overflow: visible !important;
+.trasera-fix-fondo {
+  background-size: cover !important;  /* Evita distorsión o corte */
 }
 
-
-
+/*************************************
+ *   IMPRESIÓN (NO AFECTA html2canvas)
+ *************************************/
 
 @media print {
-
-   /* ✅ Ocultar el formulario completamente */
   .formulario {
     display: none !important;
     visibility: hidden !important;
   }
-  /* Ocultar todo excepto las tarjetas */
+
   body * {
     visibility: hidden !important;
   }
@@ -241,22 +173,18 @@ button:disabled {
     visibility: visible !important;
   }
 
-  /* Firefox NO debe usar flex en impresión */
   .preview {
     display: block !important;
   }
 
-  /* Cada tarjeta es una página independiente */
   .print-page {
     display: block !important;
-    page-break-after: always !important; /* Chrome/Edge */
-    break-after: page !important;        /* Firefox */
+    page-break-after: always !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  /* Tamaño EXACTO de impresión */
   .card {
     width: 4in !important;
     height: 6in !important;
@@ -264,11 +192,6 @@ button:disabled {
     padding: 4mm !important;
     box-shadow: none !important;
 
-    /* Evitar mezcla en Firefox */
-    break-inside: avoid !important;
-    page-break-inside: avoid !important;
-
-    /* Evitar que Firefox use layout de pantalla */
     display: block !important;
     position: relative !important;
 
@@ -276,21 +199,13 @@ button:disabled {
     print-color-adjust: exact !important;
   }
 
-  /* Evitar hoja extra al final */
   .print-page:last-child {
     page-break-after: auto !important;
-    break-after: auto !important;
   }
 
-
-
-  /* ✅ Rotar la tarjeta trasera 180° solo al imprimir */
   #cardTrasera .card {
     transform: rotate(180deg) !important;
   }
-
-
-
 
   @page {
     size: portrait;
@@ -298,6 +213,29 @@ button:disabled {
   }
 }
 
+/* Copia invisible para captura */
+#capture-area {
+  display: block;
+}
 
+.capture-card {
+  width: 384px;
+  height: 576px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px;
+  background-color: #fff;
+}
 
+.capture-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 
+.capture-logo {
+  position: absolute;
+  z-index: 10;
+}

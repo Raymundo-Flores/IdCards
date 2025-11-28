@@ -3,7 +3,7 @@
   <div style="display: flex;">
 
     <!-- Formulario -->
-    <form (ngSubmit)="onSubmit()" #credencialForm="ngForm" class="formulario">
+    <form #credencialForm="ngForm" class="formulario">
       <h2>Datos del Socio</h2>
 
       <label for="nombre">Nombre del socio:</label>
@@ -16,7 +16,7 @@
       <input id="foto" type="file" accept="image/*" (change)="onFotoSeleccionada($event)">
 
       <div class="botones">
-        <button type="submit" [disabled]="!credencialForm.valid">Generar Credencial</button>
+        <button type="submit" [disabled]="!credencialForm.valid" (click)="generarPDF()">Generar PDF</button>
         <button type="button" (click)="limpiarCampos()">Limpiar</button>
       </div>
     </form>
@@ -25,7 +25,7 @@
     <div class="preview">
 
       <!-- ✅ Tarjeta frontal (visible en pantalla y 1 hoja en impresión) -->
-      <div class="print-page">
+      <div class="print-page" id="cardFrontal">
         <div class="card frontal">
           <div class="fondo-frontal">
             <div class="info-socio">
@@ -43,10 +43,15 @@
         </div>
       </div>
 
-      <!-- ✅ Tarjeta trasera (visible en pantalla y 1 hoja en impresión) -->
-      <div class="print-page">
-        <div class="card trasera"></div>
+      <!-- ✅ Tarjeta trasera compatible con Firefox -->
+      <div class="print-page" id="cardTrasera">
+        <div class="card trasera">
+          <div class="trasera-fondo"></div>
+          <img src="assets/logo_ferrari.jpg" class="logo-trasera">
+        </div>
       </div>
+
+
 
     </div>
 

@@ -119,26 +119,17 @@ button:disabled {
   z-index: 0;
 }
 
-/* Fondo trasero */
-.card.trasera {
-  position: relative;
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(54, 43, 43, 0.4),
-              0 4px 10px rgba(0, 0, 0, 0.4);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #DC0000;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-image: url('../../assets/itine.jpg');
+
+
+@-moz-document url-prefix() {
+  #cardTrasera .card {
+    overflow: visible !important;
+  }
 }
 
-/* Imagen decorativa superior */
-.card.trasera::before {
+
+/*Imagen decorativa superior */
+/* .card.trasera::before {
   content: "";
   position: absolute;
   top: 21px;
@@ -151,7 +142,7 @@ button:disabled {
   background-position: top center;
   z-index: 2;
   pointer-events: none;
-}
+} */
 
 .datos-socio{
   top: 73px;
@@ -190,6 +181,49 @@ button:disabled {
 .print-page {
   display: block; /* ✅ En pantalla no afecta */
 }
+
+/* ✅ Tarjeta trasera compatible con Firefox */
+.card.trasera {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden; /* Firefox ya no falla con background-image */
+  background-color: #DC0000;
+}
+
+/* ✅ Fondo trasero como background-image (Firefox-friendly) */
+.trasera-fondo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../../assets/itine.jpg');
+  background-size: contain;      /* ✅ NO se deforma */
+  background-position: center;   /* ✅ Centrada */
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+/* ✅ Logo encima */
+.logo-trasera {
+  position: absolute;
+  top: 21px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.capture-fix {
+  overflow: visible !important;
+}
+
+#cardTrasera .card.capture-fix {
+  overflow: visible !important;
+}
+
+
+
 
 @media print {
 
@@ -247,6 +281,16 @@ button:disabled {
     page-break-after: auto !important;
     break-after: auto !important;
   }
+
+
+
+  /* ✅ Rotar la tarjeta trasera 180° solo al imprimir */
+  #cardTrasera .card {
+    transform: rotate(180deg) !important;
+  }
+
+
+
 
   @page {
     size: portrait;

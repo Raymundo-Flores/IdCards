@@ -1,17 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-credencial-ferrari',
   templateUrl: './credencial-ferrari.html',
   styleUrls: ['./credencial-ferrari.css'],
-  imports :[
+  imports: [
     CommonModule,
     FormsModule
   ]
 })
 export class CredencialFerrariComponent {
+
+  constructor(private cdr: ChangeDetectorRef) {}
+
   nombre: string = '';
   fecha: string = '';
   fotoURL: string | ArrayBuffer | null = null;
@@ -28,25 +33,56 @@ export class CredencialFerrariComponent {
     }
   }
 
-  onSubmit(): void {
-    // Aquí puedes hacer algo cuando se "genere" la credencial,
-    // por ejemplo guardarlo, enviarlo al servidor, etc.
-    console.log('Credencial generada:', {
-      nombre: this.nombre,
-      fecha: this.fecha,
-      fotoURL: this.fotoURL
+  async generarPDF() {
+
+    // ✅ Congelar DOM antes de capturar
+    this.cdr.detectChanges();
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'in',
+      format: [4, 6]
     });
-    // Puedes mostrar un mensaje o lo que necesites
-    alert('Credencial generada correctamente 🏎️');
+
+    /* === FRONTAL === */
+    const frontal = document.querySelector('#cardFrontal .card') as HTMLElement;
+
+    const canvasFrontal = await html2canvas(frontal, {
+      scale: 3,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null
+    });
+
+    pdf.addImage(canvasFrontal.toDataURL('image/png'), 'PNG', 0, 0, 4, 6);
+
+    /* === TRASERA === */
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    pdf.addPage([4, 6], 'portrait');
+
+    const trasera = document.querySelector('#cardTrasera .card') as HTMLElement;
+
+    const canvasTrasera = await html2canvas(trasera, {
+      scale: 3,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null
+    });
+
+    const imgTrasera = canvasTrasera.toDataURL('image/png');
+
+    pdf.addImage(imgTrasera, 'PNG', 0, 0, 4, 6, undefined, 'NONE', 180);
+
+    pdf.save('credencial.pdf');
   }
 
-  // 🧹 Método para limpiar todos los campos del formulario
   limpiarCampos(): void {
     this.nombre = '';
     this.fecha = '';
     this.fotoURL = null;
 
-    // Limpiar el input file manualmente
     const inputFoto = document.getElementById('foto') as HTMLInputElement;
     if (inputFoto) {
       inputFoto.value = '';

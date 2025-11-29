@@ -15,6 +15,22 @@
       <label for="foto">Foto del socio:</label>
       <input id="foto" type="file" accept="image/*" (change)="onFotoSeleccionada($event)">
 
+      <!-- Sección para usar cámara -->
+<div class="camara-section">
+
+  <button type="button" (click)="iniciarCamara()">Iniciar cámara</button>
+
+  <div *ngIf="mostrarCamara" class="camara-container">
+
+    <video #video autoplay playsinline></video>
+
+    <button type="button" (click)="capturarFoto()">Tomar foto</button>
+
+  </div>
+
+</div>
+
+
       <div class="botones">
         <button type="submit" [disabled]="!credencialForm.valid" (click)="generarPDF()">Generar PDF</button>
         <button type="button" (click)="limpiarCampos()">Limpiar</button>
@@ -66,8 +82,8 @@
   position: fixed;
   top: -9999px;
   left: -9999px;
-  width: 384px;
-  height: 576px;
+  width: 400px;
+  height: 582px;
   pointer-events: none;
   opacity: 0;">
 </div>

@@ -17,7 +17,7 @@
   min-height: 100vh;
 }
 
-.container > div {
+.container>div {
   display: flex;
   gap: 30px;
 }
@@ -52,12 +52,14 @@
 
 /* Tarjeta general */
 .card {
-  width: 4in; 
-  height: 6in;
+  width: 400px;
+  /* 10.6 cm */
+  height: 582px;
+  /* 15.4 cm */
   border-radius: 6px;
   overflow: hidden;
   position: relative;
-  box-shadow: 
+  box-shadow:
     0 0 10px rgba(255, 255, 255, 0.4),
     0 4px 10px rgba(0, 0, 0, 0.4);
   display: flex;
@@ -144,15 +146,18 @@
  *************************************/
 
 .html2canvas-fix {
-  width: 384px !important;   /* 4in → px */
-  height: 576px !important;  /* 6in → px */
+  width: 384px !important;
+  /* 4in → px */
+  height: 576px !important;
+  /* 6in → px */
   overflow: visible !important;
   transform: none !important;
   backface-visibility: visible !important;
 }
 
 .trasera-fix-fondo {
-  background-size: cover !important;  /* Evita distorsión o corte */
+  background-size: cover !important;
+  /* Evita distorsión o corte */
 }
 
 /*************************************
@@ -169,7 +174,8 @@
     visibility: hidden !important;
   }
 
-  .print-page, .print-page * {
+  .print-page,
+  .print-page * {
     visibility: visible !important;
   }
 
@@ -219,8 +225,8 @@
 }
 
 .capture-card {
-  width: 384px;
-  height: 576px;
+  width: 400px !important;    /* 10.6 cm */
+  height: 582px !important;   /* 15.4 cm */
   position: relative;
   overflow: hidden;
   border-radius: 6px;
@@ -238,4 +244,24 @@
 .capture-logo {
   position: absolute;
   z-index: 10;
+}
+
+.camara-section {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.camara-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.camara-container video {
+  width: 100%;
+  max-height: 200px;
+  border: 1px solid #555;
+  border-radius: 4px;
 }

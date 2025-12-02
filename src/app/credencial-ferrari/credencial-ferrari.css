@@ -22,7 +22,25 @@
   gap: 30px;
 }
 
+/* CONTENIDO GENERAL */
+.contenido-main {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  justify-content: center;
+}
+
+/* FORMULARIO + CÁMARA EN UN SOLO BLOQUE */
+.form-camera-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+  align-items: flex-start;
+}
+
+/* FORMULARIO */
 .formulario {
+
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -30,9 +48,69 @@
   padding: 15px;
   border-radius: 8px;
   width: 250px;
+  height: 410px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   color: #000;
+
+  /* width: 360px;
+  background: #ffe5e5;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25); */
 }
+
+/* PANEL DE CÁMARA */
+.camera-panel {
+  width: 330px;
+  height: 400px;
+  background: #fff4f4;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* VIDEO */
+.camara-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.camara-container video {
+  width: 100%;
+  border-radius: 10px;
+  background: black;
+}
+
+.btn-full, .btn-capturar {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  background: #d60000;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-full:hover, .btn-capturar:hover {
+  background: #b30000;
+}
+
+/* .formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border-radius: 8px;
+  width: 250px;
+  height: 400px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  color: #000;
+} */
 
 .formulario input,
 .formulario button {
@@ -52,11 +130,11 @@
 
 /* Tarjeta general */
 .card {
-  width: 400px;
+  width: 386px;
   /* 10.6 cm */
-  height: 582px;
+  height: 536px;
   /* 15.4 cm */
-  border-radius: 6px;
+  /* border-radius: 6px; */
   overflow: hidden;
   position: relative;
   box-shadow:
@@ -170,6 +248,11 @@
     visibility: hidden !important;
   }
 
+  .camera-panel{
+    display: none !important;
+    visibility: hidden !important;
+  }
+
   body * {
     visibility: hidden !important;
   }
@@ -225,11 +308,11 @@
 }
 
 .capture-card {
-  width: 400px !important;    /* 10.6 cm */
-  height: 582px !important;   /* 15.4 cm */
+  width: 400px !important;    /* 10.2 cm */
+  height: 582px !important;   /* 14.2 cm */
   position: relative;
   overflow: hidden;
-  border-radius: 6px;
+  /* border-radius: 6px; */
   background-color: #fff;
 }
 

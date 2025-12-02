@@ -15,29 +15,65 @@ export class CredencialFerrariComponent {
   constructor(private cdr: ChangeDetectorRef) { }
 
   nombre: string = '';
-  fecha: string = '';
+  fecha: string | null = null;
   fotoURL: string | ArrayBuffer | null = null;
+
+  /* Tamaño real en px → 10.2 × 14.2 cm */
+  readonly WIDTH_PX = 386;
+  readonly HEIGHT_PX = 536;
 
   /* ------------------------------
         VARIABLES PARA CÁMARA
   ------------------------------ */
   @ViewChild('video', { static: false }) videoRef!: ElementRef<HTMLVideoElement>;
-  mostrarCamara: boolean = false;
+  camaras: MediaDeviceInfo[] = [];
   stream: MediaStream | null = null;
+  mostrarCamara = false;
 
-  iniciarCamara() {
+  async iniciarCamara() {
     this.mostrarCamara = true;
 
-    navigator.mediaDevices.getUserMedia({ video: true })
+    try {
+      await navigator.mediaDevices.getUserMedia({ video: true });
+      const dispositivos = await navigator.mediaDevices.enumerateDevices();
+
+      this.camaras = dispositivos.filter(d => d.kind === "videoinput");
+
+      if (this.camaras.length === 0) {
+        alert("No se encontraron cámaras.");
+        return;
+      }
+
+      this.iniciarCamaraConDispositivo(this.camaras[0].deviceId);
+
+    } catch (error) {
+      console.error("Error al detectar cámaras:", error);
+    }
+  }
+
+  encenderCamara(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const deviceId = select.value;
+    this.iniciarCamaraConDispositivo(deviceId);
+  }
+
+  iniciarCamaraConDispositivo(deviceId: string) {
+    navigator.mediaDevices.getUserMedia({
+      video: { deviceId: { exact: deviceId } }
+    })
       .then(stream => {
+        if (this.stream) {
+          this.stream.getTracks().forEach(t => t.stop());
+        }
+
         this.stream = stream;
+
         const video = this.videoRef.nativeElement;
         video.srcObject = stream;
         video.play();
       })
-      .catch(error => {
-        console.error("Error al iniciar la cámara", error);
-        this.mostrarCamara = false;
+      .catch(err => {
+        console.error("Error al iniciar la cámara:", err);
       });
   }
 
@@ -45,10 +81,10 @@ export class CredencialFerrariComponent {
     if (!this.videoRef) return;
 
     const video = this.videoRef.nativeElement;
-    const canvas = document.createElement('canvas');
 
-    canvas.width = 450;  // proporción similar a tu foto-socio (45mm x 61mm)
-    canvas.height = 610;
+    const canvas = document.createElement('canvas');
+    canvas.width = this.WIDTH_PX;
+    canvas.height = this.HEIGHT_PX;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -56,8 +92,6 @@ export class CredencialFerrariComponent {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     this.fotoURL = canvas.toDataURL('image/png');
-
-    this.cerrarCamara();
   }
 
   cerrarCamara() {
@@ -69,27 +103,21 @@ export class CredencialFerrariComponent {
     }
   }
 
-
-  /* -------------------------
-      SUBIR FOTO DESDE ARCHIVO
-  -------------------------- */
   onFotoSeleccionada(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      const file = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
         this.fotoURL = reader.result;
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(input.files[0]);
     }
   }
 
-
-
   /* -------------------------
-        GENERAR PDF (NO TOCADO)
+        GENERAR PDF AJUSTADO
   -------------------------- */
+
   async generarPDF() {
 
     const frontalOriginal = document.querySelector('#cardFrontal .card') as HTMLElement;
@@ -97,73 +125,67 @@ export class CredencialFerrariComponent {
 
     const capture = document.getElementById('capture-area') as HTMLElement;
 
-    // Medidas EXACTAS del PDF (px)
-    const WIDTH_PX = 400;
-    const HEIGHT_PX = 582;
-
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
-      format: [106, 154]   // 10.6 × 15.4 cm
+      format: [102, 142]   // ancho × alto EXACTO
     });
 
-    // 1. CAPTURAR FRONTAL
+    /* -----------------------
+        CAPTURA FRONTAL
+    ------------------------*/
     capture.innerHTML = "";
     const cloneFront = frontalOriginal.cloneNode(true) as HTMLElement;
-    cloneFront.classList.add("capture-card");
-    cloneFront.style.width = WIDTH_PX + "px";
-    cloneFront.style.height = HEIGHT_PX + "px";
+    cloneFront.style.width = this.WIDTH_PX + "px";
+    cloneFront.style.height = this.HEIGHT_PX + "px";
+    cloneFront.style.transform = "none";
 
     capture.appendChild(cloneFront);
-
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise(r => setTimeout(r, 80));
 
     const canvasFront = await html2canvas(cloneFront, {
       scale: 3,
       useCORS: true,
-      backgroundColor: null,
-      allowTaint: true,
+      backgroundColor: "#ffffff"
     });
 
     const frontImg = canvasFront.toDataURL("image/png");
 
-    pdf.addImage(frontImg, "PNG", 0, 0, 106, 154);
+    pdf.addImage(frontImg, "PNG", 0, 0, 102, 142);
 
-    // 2. CAPTURAR TRASERA
+    /* -----------------------
+        CAPTURA TRASERA
+    ------------------------*/
     pdf.addPage();
     capture.innerHTML = "";
-const cloneBack = traseraOriginal.cloneNode(true) as HTMLElement;
 
-  cloneBack.style.width = "400px";
-  cloneBack.style.height = "582px";
+    const cloneBack = traseraOriginal.cloneNode(true) as HTMLElement;
+    cloneBack.style.width = this.WIDTH_PX + "px";
+    cloneBack.style.height = this.HEIGHT_PX + "px";
 
-  // 🔥 ESTA ES LA ROTACIÓN QUE html2canvas SÍ RENDERIZA
-  cloneBack.style.transform = "rotate(180deg)";
-  cloneBack.style.transformOrigin = "center center";
-  cloneBack.style.display = "flex";
-  cloneBack.style.alignItems = "center";
-  cloneBack.style.justifyContent = "center";
+    // 🔥 Rotación correcta para impresión tipo credencial
+    cloneBack.style.transform = "rotate(180deg)";
+    cloneBack.style.transformOrigin = "center center";
 
-  capture.appendChild(cloneBack);
+    capture.appendChild(cloneBack);
+    await new Promise(r => setTimeout(r, 80));
 
-  await new Promise(r => setTimeout(r, 80));
+    const canvasBack = await html2canvas(cloneBack, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: "#ffffff"
+    });
 
-  const canvasBack = await html2canvas(cloneBack, {
-    scale: 3,
-    useCORS: true,
-    backgroundColor: "#ffffff"
-  });
+    const backImg = canvasBack.toDataURL("image/png");
 
-  pdf.addImage(canvasBack, "PNG", 0, 0, 106, 154);
- 
-    pdf.save("credencial.pdf");
+    pdf.addImage(backImg, "PNG", 0, 0, 102, 142);
+
+    pdf.save(`${this.nombre || 'credencial-ferrari'}.pdf`);
   }
-
-
 
   limpiarCampos(): void {
     this.nombre = '';
-    this.fecha = '';
+    this.fecha = null;
     this.fotoURL = null;
 
     const inputFoto = document.getElementById('foto') as HTMLInputElement;
